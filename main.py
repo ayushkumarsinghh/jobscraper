@@ -6,11 +6,15 @@ from utils.saver import save_to_csv
 def main():
     keyword = input("Enter job keyword (e.g. python, backend): ").lower()
 
-    html = fetch_page()
-    jobs = parse_jobs(html)
+    data = fetch_page()
+    jobs = parse_jobs(data)
     filtered = filter_jobs(jobs, keyword)
 
     print(f"\nFound {len(filtered)} jobs:\n")
+
+    if not filtered:
+        print("No matching jobs found. Skipping save.")
+        return
 
     for job in filtered:
         print(f"{job['title']} - {job['company']}")

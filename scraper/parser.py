@@ -1,21 +1,19 @@
-from bs4 import BeautifulSoup
-
-def parse_jobs(html):
-    soup = BeautifulSoup(html, "html.parser")
+def parse_jobs(data):
     jobs = []
+    
+    # If data is empty or invalid
+    if not data or not isinstance(data, list):
+        return jobs
 
-    rows = soup.find_all("tr", class_="job")
-
-    for job in rows:
-        title = job.find("h2")
-        company = job.find("h3")
-        link_tag = job.find("a", class_="preventLink")
-
-        if title and company and link_tag:
-            jobs.append({
-                "title": title.text.strip(),
-                "company": company.text.strip(),
-                "link": "https://remoteok.com" + link_tag["href"]
-            })
+    for item in data:
+        # Skip the first item which is usually the legal terms
+        if "legal" in item:
+            continue
+            
+        jobs.append({
+            "title": item.get("position", "Unknown"),
+            "company": item.get("company", "Unknown"),
+            "link": item.get("url", item.get("apply_url", "No link"))
+        })
 
     return jobs
